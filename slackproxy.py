@@ -32,7 +32,12 @@ class SlackClientProxy():
 
 
     def rtm_read(self):
-        pass
+        return [
+            {'channel': 'a_channel', 'text': '<@123> some text help i need something something'},
+            {'channel': 'a_channel', 'text': '<@123> some text halp i need something something'},
+            {'channel': 'a_channel', 'text': '<@123> some text halp something'},
+            {'channel': 'a_channel', 'text': '<@123> nothing here'}
+        ]
 
 
 class ApiCallProxy():
@@ -43,4 +48,7 @@ class ApiCallProxy():
 
 
     def get(self, key):
-        pass
+        if (key == self.OK):
+            return True
+        if (key == SlackClientProxy.MEMBERS):
+            return [{'name':'supportbot'},{'id':1}]

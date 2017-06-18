@@ -7,7 +7,7 @@
       "is_regexp": false
     },
     {
-      "value": "i need .*",
+      "value": ".*i need.*",
       "response": "Sorry?",
       "is_regexp": true
     }

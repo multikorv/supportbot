@@ -15,13 +15,15 @@ class ResponseAiDupe():
     def get_response(self, text):
         response = None
         found_response = False
-
+        #print self.data
         for maybe_response in self.data['responses']:
+
             is_regexp = maybe_response['is_regexp']
             value = maybe_response['value']
+            response = None
             if (is_regexp and re.match(value, text)):
                 found_response = True
-            elif value == text:
+            elif value in text:
                 found_response = True
             if found_response:
                 response = maybe_response['response']

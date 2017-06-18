@@ -1,0 +1,15 @@
+{
+  "responses":
+  [
+    {
+      "value": "halp",
+      "response": "You'll get help",
+      "is_regexp": false
+    },
+    {
+      "value": "i need .*",
+      "response": "Sorry?",
+      "is_regexp": true
+    }
+  ]
+}

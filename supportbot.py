@@ -1,6 +1,9 @@
 import os
-from slackproxy import SlackClientProxy
+import time
+from slackproxy import SlackClientProxy, ApiCallProxy
+from responseai import ResponseAiDupe
 
+import json
 
 class SupportBot():
     BOT_NAME = 'supportbot'
@@ -21,13 +24,16 @@ class SupportBot():
             channel (str): channel
         """
         response = "Command: {0}, channel, {1}".format(command, channel)
-        self.post_message(channel=channel, text=response)
         self.try_support_response(channel=channel, text=response)
 
 
     def try_support_response(self, channel, text):
-        response = "You'll get halp!" if "halp" in text else "Sorry?"
-        self.post_message(channel=channel, text=response)
+        try:
+            response = self.ai.get_response(text)
+            self.post_message(channel=channel, text=response)
+        except Exception as e:
+            print 'Could not find a response: {0}'.format(e)
+
 
 
     def post_message(self, channel, text):
@@ -41,6 +47,8 @@ class SupportBot():
             this parsing function returns None unless a message is
             directed at the Bot, based on its ID.
         """
+        # TODO remove when ready
+        return "Some command", "a_channel"
         output_list = slack_rtm_output
         if output_list and len(output_list) > 0:
             for output in output_list:
@@ -53,16 +61,16 @@ class SupportBot():
 
     def init(self):
         api_call = self.slack_client_proxy.api_call(SlackClientProxy.Users.LIST)
-        if api_call.get('ok'):
+        if api_call.get(ApiCallProxy.OK):
             # retrieve all users so we can find our bot
             users = api_call.get(SlackProxy.MEMBERS)
             for user in users:
-                if 'name' in user and user.get('name') == BOT_NAME:
+                if 'name' in user and user.get('name') == self.BOT_NAME:
                     self.botid = user.get('id')
                     self.at_bot = "<@" + self.botid + ">"
                     print("Bot ID for '" + user['name'] + "' is " + self.botid)
         else:
-            print("could not find bot user with the name " + BOT_NAME)
+            print("could not find bot user with the name " + self.BOT_NAME)
 
 
     def start(self):
@@ -70,9 +78,9 @@ class SupportBot():
         if self.slack_client_proxy.rtm_connect():
             print("StarterBot connected and running!")
             while True:
-                command, channel = parse_slack_output(self.slack_client_proxy.rtm_read())
+                command, channel = self.parse_slack_output(self.slack_client_proxy.rtm_read())
                 if command and channel:
-                    handle_command(command, channel)
+                    self.handle_command(command, channel)
                 time.sleep(READ_WEBSOCKET_DELAY)
         else:
             print("Connection failed. Invalid Slack token or bot ID?")
@@ -80,6 +88,10 @@ class SupportBot():
 
 def main():
     supportbot = SupportBot()
+
+    supportbot.ai = ResponseAiDupe()
+    supportbot.ai.load()
+
     supportbot.init()
     supportbot.start()
 

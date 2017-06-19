@@ -17,7 +17,6 @@ class ResponseAiDupe():
         found_response = False
         #print self.data
         for maybe_response in self.data['responses']:
-
             is_regexp = maybe_response['is_regexp']
             value = maybe_response['value']
             response = None

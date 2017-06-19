@@ -15,30 +15,19 @@ class SlackClientProxy():
 
     def __init__(self, stringtoken):
         self.token = stringtoken
-
-
-    def handle_command(self):
-        pass
+        self.slack = SlackClient(self.token)
 
 
     def api_call(self, cmd, channel=None, text=None, as_user=True):
-        if cmd == self.Chat.POSTMESSAGE:
-            print "POSTMESSAGE {0}".format(text)
-        return ApiCallProxy()
+        return self.slack.api_call(cmd, channel=channel, text=text, as_user=as_user)
 
 
     def rtm_connect(self):
-        return True
+        return self.slack.rtm_connect()
 
 
     def rtm_read(self):
-        return [
-            {'channel': 'a_channel', 'text': '<@123> some text help i need something something'},
-            {'channel': 'a_channel', 'text': '<@123> some text halp i need something something'},
-            {'channel': 'a_channel', 'text': '<@123> some text halp something'},
-            {'channel': 'a_channel', 'text': '<@123> nothing here'}
-        ]
-
+        return self.slack.rtm_read()
 
 class ApiCallProxy():
     OK = 'ok'

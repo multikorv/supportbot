@@ -57,7 +57,7 @@ class SupportBot():
                     output_channel = output['channel']
                     return_output.append((output_text, output_channel))
             return return_output
-        return None, None
+        return None
 
 
     def init(self):
